@@ -1,0 +1,68 @@
+1. Points
+    a. List of injector Points and their global direction vectors at the injector face. Magnitude should not matter.
+    b. Create centroids with reduced area
+
+    c. find closest centroid of every point
+    d. Once all points have groups take the average point of that group and move centroid to new location
+    e. Repeat steps c and d until points stop changing centroid groups
+
+    f. Take final centroid locations of previous tier, raise them in the z direction by the distance_between_tiers, and make them the new points.
+    g. Create new centroids with reduced area. Repeat until convergence.
+#Points notes
+    -Need a way to track not just child points but the original injector points that each branch point is responsible for.
+
+2. Curves
+    a. Find average of all injector point that this one branch point contains. Do not use the branch point direct children to determine average, only use original injector points.
+    Create a vector between branch point and all its injector children. This will be used as the tangent vector for the branch point. Make it a unit vector as we only care about direction right now.
+    b. Go through and define all branch points with their associated tangent vector via method 2a.
+    c. Now that we know all of the points, associated child points, and tangent vector direction we can define hermite curves. Not sure about what methodolgy to use to vary magnitude of unit vectors yet.
+#Curve notes
+    -In 2a it is specified that the average needs to be taken of all original injector points. This is true only if all injector points are identical in size.
+    Theoretically each point could contain a weight correlated to how much area the injector point had. If one injector point had twice the area of another injector point they should not be valued equally in plumbing.
+    -To support different element sizing each element would need to hold a weight.
+    -Setting the branch point to just be the average of all of the children point may not be the best way to group branches. The flow direction will change at each branch point which is bad.
+    We need to figure out a way to minimize changes in flow direction. The answer may have something to do with averaging outlet flow vectors or minimizing curvature.
+
+3. Lofting
+    a. By having each split point contain a "weight" which is correlated to the surface area each injector element takes up it is easy to know how large the radius is supposed to be at each split point.
+    Find the total weight contained of all injector points. Then for each split point divide its weight by the total weight to find what percantage of the area it should take up.
+    b. For now I will do a linear taper between these radius points.
+
+General Thoughts
+    -The current weights averaging approach for centroids favors putting the centroid closer to larger clusters and further away from distant points.
+    This might be reducing the overall pressure drop in the system however it could lead to different pressures at the outlets. Outlets further away from initial branch point could have more pressure drop.
+    What is more important: overall pressure drop or near identical feed pressures of all elements?
+    -For interweaving of points what is the order of operations? The order of operations is likely determined by what is priority. Should one set of passages be prioritized and then have secondary propellant
+    wrap around primary? Should both sets be created in tandem? Should regen cooling and single point be considered in the same way? 
+    -Is all of this explicit programming the best approach? It seems as if the generation of passages might be out of the scope of if-else programming style and necessitate generative designs.
+    Topology optimization for fluids rather than structural.
+
+
+DOE on Fractal passages
+    1. What general rules/conditions are there for constriction of pipes.
+    2. If one branch in a junction is being underfed, what remedies are there for changing it?
+    3.  How can we predict an underfed channel?
+    4. How can we relate a branch condition with vector magnitude at the branch points?
+    5. Do all branch points need to be oriented straight down or are there more optimal designs which lead to reduced pressure drop
+    6. How should the number of centroids be determined?
+    7. Is there a better initialization method of centroids rather than around a concentric ring?
+
+Perfected split
+In order to create the perfect taper of radius we would need a trained NN and genetic algorithm. To train the neural net we would need:
+    -Direction vector spanning from the parent to each child.
+    -Start dir/mag of parent point
+    -End dir/mag all child points
+    -radius of parent
+    -radius of all children
+
+
+
+To Do
+    - Implement different initialization methods.
+    - Make weights and surface area independant.
+    - Setup a system that takes in a massive list of points and can initialize from them.
+    - Come up with a way to visually match curves, points, etc with their data location in the 2D Array
+    - Figure out what to do with centroids that only have 1 child. Raising tier 1 centroids causes straight tubes to form where they otherwise wouldnt
+    If kept at same point there can be collisions to higher tiers, if raised there is a straight tube, or the centroid can be deleted and k-means re-evaluated.
+    - Find what happens when meshing multiple solids
+    
