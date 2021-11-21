@@ -1,3 +1,4 @@
+# Python Script, API Version = V17
 ComponentHelper.SetRootActive()
 root_part = DocumentHelper.GetActivePart()
 root_part.ClearAllPartData()
@@ -7,8 +8,8 @@ import random
 
 #-------------------------------------VARIABLES TO BE CHANGED-------------------------------------
 tiers = 2
-tier_0_aspect_ratio = 2.0
-final_tier_aspect_ratio = 1.5
+tier_0_aspect_ratio = 2.5
+final_tier_aspect_ratio = 2.0
 aspect_ratio_exponent = 0.6
 auto_strength_ratio = 1.0
 centroid_initialization = "single_circle"
